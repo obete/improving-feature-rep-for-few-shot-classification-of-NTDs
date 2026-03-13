@@ -1,18 +1,18 @@
 import torch.nn as nn
 from torchvision import models
+from omegaconf import OmegaConf
 
 def create_model(config, num_classes:int):
-    """THis function Loads the different pre-trained models.
-    In here we freeze the backbonw and attach a head which matches the dataset classes.
-    The function returns a dictionary of pre-traine models with an attached linear head"""
+    """In this the pre-traind models are loaded, Backbone frozen and a linear classifierr attached.
+    The function returns a dictionary of models"""
     model_list = config.model.list
     model_dict = {}
     for i in model_list:
         i = i.lower()
         if i == "resnet50":
-            model_dict["resnet50"] = models.resnet50(weights="IMAGENET1K_V1")
+            model_dict[i] = models.resnet50(weights="IMAGENET1K_V1")
         elif i == "resnet101":
-            model_dict["resnet101"] = models.resnet101(weights="IMAGENET1K_V1")
+            model_dict[i] = models.resnet101(weights="IMAGENET1K_V1")
         elif i == "vgg16":
             model_dict["vgg16"]  = models.vgg16(weights="IMAGENET1K_V1")
         elif i == "vgg16bn":
@@ -57,3 +57,10 @@ def create_model(config, num_classes:int):
 
     return model_dict
 
+
+if __name__ == "__main__":
+    config = OmegaConf.load("D:/MSCS_Research/CODE/Feature_Extractor_Evaluation/configs/models_list.yaml")
+    m_dict = (create_model(config, 9))
+    
+    for name, model in m_dict.items():
+        print(name, "Output Classes: ", model.fc.out_features)
