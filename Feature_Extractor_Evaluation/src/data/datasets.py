@@ -39,8 +39,5 @@ def create_datasets(config):
     return train_ds,val_ds, num_classes, class_names
 
 
-#if __name__ == "__main__":
-#    config = OmegaConf.load("D:/MSCS_Research/CODE/Feature_Extractor_Evaluation/configs/fitzpatrick17k.yaml")
-#    print(create_datasets(config))
 
     
