@@ -1,0 +1,11 @@
+#configs/models_list.yaml
+model:
+ list:
+ - resnet50
+ - resnet101
+ pretrained: true
+ backbone_freeze: true
+ 
+
+
+  

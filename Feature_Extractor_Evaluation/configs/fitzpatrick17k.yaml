@@ -1,0 +1,12 @@
+#configs/fitzpatrick17k.yaml
+data:
+ name: fitzpatrick17k
+ root: D:/MSCS_Research/Datasets/RAW/all_skin_images 
+ batch_size: 32
+ num_workers: 4
+
+train:
+ epochs: 100
+ lr: 0.005
+  
+
