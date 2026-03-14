@@ -1,5 +1,13 @@
 #main.py
 
+import sys
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+sys.path.append(os.path.join(BASE_DIR, "Feature_Extractor_Evaluation/src"))
+sys.path.append(os.path.join(BASE_DIR))
+
 from omegaconf import OmegaConf
 from data.datasets import DatasetFactory
 from models.model_factory import ModelFactory
