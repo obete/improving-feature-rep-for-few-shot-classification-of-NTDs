@@ -3,6 +3,15 @@ model:
  list:
  - resnet50
  - resnet101
+ - vgg16
+ - vgg16bn
+ - efficientnet_b0
+ - efficientnet_b1
+ - mobilenet_v2
+ - densenet121
+ - densenet161
+ - vit_b_16
+ - vit_b_32
  pretrained: true
  backbone_freeze: true
  
