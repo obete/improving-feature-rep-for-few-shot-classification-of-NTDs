@@ -6,7 +6,6 @@ from models.model_factory import ModelFactory
 
 if __name__ == "__main__":
 
-
     config = OmegaConf.load("D:/MSCS_Research/CODE/Feature_Extractor_Evaluation/configs/models_list.yaml")
     config1 = OmegaConf.load("D:/MSCS_Research/CODE/Feature_Extractor_Evaluation/configs/fitzpatrick17k.yaml")
     dataset_builder = DatasetFactory(config1)
@@ -16,7 +15,6 @@ if __name__ == "__main__":
 
     models_dict = factory.build()
     
-
     for name, model in models_dict.items():
         out_features, params = factory.get_model_info(model) 
         print(name, " | Trainable Parameters: ", params, " | Output features: ", out_features )
