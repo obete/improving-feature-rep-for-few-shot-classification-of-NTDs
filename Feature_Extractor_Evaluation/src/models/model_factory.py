@@ -91,7 +91,7 @@ class ModelFactory:
                 )
 
     def get_model_info(self, model):
-        "Here we want to get info about the models we are evaluation, especically the trainable parameters"
+        "Here we want to get info about the models, especically the trainable parameters"
         
         if hasattr(model, "fc"):
             out_features = model.fc.out_features
@@ -118,4 +118,7 @@ class ModelFactory:
         self.replace_classifier()
 
         return self.model_dict
+    
+
+
     

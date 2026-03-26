@@ -3,7 +3,7 @@ data:
  name: fitzpatrick17k
  root: D:/MSCS_Research/Datasets/RAW/all_skin_images 
  batch_size: 32
- num_workers: 4
+ num_workers: 2
 
 train:
  epochs: 100

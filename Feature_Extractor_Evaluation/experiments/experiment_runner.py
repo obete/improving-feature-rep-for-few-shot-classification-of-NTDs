@@ -5,68 +5,58 @@ import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
 from torch.utils.data import DataLoader, Subset
-from sklearn.model_selection import train_test_split
+from data.datasets import DatasetFactory
+from models.model_factory import ModelFactory
+from engine.trainer import Trainer   # adjust if trainer.py location differs
 
 
-class ExperimentRunner:
+
+class ExperimentRunner(DatasetFactory, ModelFactory, Trainer):
  
-    def __init__(
-        self,
-        dataset,
-        model_factory,
-        batch_size=16,
-        epochs=50,
-        lr=1e-3,
-        patience=5,
-        min_delta=1e-3,
-        seed=42,
-        device=None
-    ):
+    def __init__(self, data_config, model_config, batch_size=16, epochs=50, lr=1e-3, patience=5, min_delta=1e-3, seed=42, device=None):
 
-        self.dataset = dataset
-        self.model_factory = model_factory
-
+        self.data_config = data_config
+        self.model_factory = model_config
         self.batch_size = batch_size
         self.epochs = epochs
         self.lr = lr
         self.patience = patience
         self.min_delta = min_delta
         self.seed = seed
-
+        
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def make_split(self, val_size=0.2):
+    def run(self):
+        # -------------------------
+        # Build dataset
+        # -------------------------
+        dataset_builder = DatasetFactory(self.data_config)
+        train_ds, val_ds, num_classes, class_names = dataset_builder.build()
 
-        labels = [y for _, y in self.dataset.samples]
+        print("\nDataset Loaded")
+        print("Classes:", num_classes)
+        print(class_names)
 
-        train_idx, val_idx = train_test_split(
-            range(len(labels)),
-            test_size=val_size,
-            stratify=labels,
-            random_state=self.seed
+        #loading the Model  
+        all_models = ModelFactory(self.model_config, num_classes)
+        models_dict = all_models.build()
+
+
+        #Set Dataloader
+        train_loader = DataLoader(
+            train_ds,
+            batch_size=self.batch_size,
+            shuffle=True,
         )
 
-        return train_idx, val_idx
-
-    def run(self):
-
-        summary_rows = []
-
-        models_dict = self.model_factory.build()
-
-        train_idx, val_idx = self.make_split()
-
-        train_loader = DataLoader(
-            Subset(self.dataset, train_idx),
+        val_loader = DataLoader(
+            val_ds,
             batch_size=self.batch_size,
             shuffle=True
         )
 
-        val_loader = DataLoader(
-            Subset(self.dataset, val_idx),
-            batch_size=self.batch_size,
-            shuffle=False
-        )
+        #Training
+        summary_rows = []
 
         for name, model in models_dict.items():
 
@@ -74,23 +64,13 @@ class ExperimentRunner:
 
             criterion = nn.CrossEntropyLoss()
 
-            optimizer = optim.Adam(
-                filter(lambda p: p.requires_grad, model.parameters()),
-                lr=self.lr
-            )
+            optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=self.lr)
 
-            trainer = Trainer(
-                model,
-                train_loader,
-                val_loader,
-                criterion,
-                optimizer,
-                self.device
-            )
+            trainer = Trainer(model, train_loader, val_loader, criterion, optimizer, self.device)
 
             history = trainer.fit(self.epochs)
 
-            best_epoch = max(history, key=lambda x: x["accuracy"])
+            best_epoch = max(history, key=lambda x: x["weighted_f1"])
 
             summary_rows.append({
                 "Model": name,

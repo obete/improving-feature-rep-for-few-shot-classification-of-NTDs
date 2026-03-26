@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+import pandas as pd
 
 
 class Trainer:
@@ -32,16 +33,15 @@ class Trainer:
 
             self.optimizer.zero_grad()
 
-            out = self.model(x)
-            loss = self.criterion(out, y)
-
+            prediction = self.model(x)
+            loss = self.criterion(prediction, y)
             loss.backward()
             self.optimizer.step()
 
             total_loss += loss.item() * x.size(0)
             n += x.size(0)
 
-            preds.append(out.argmax(1).detach().cpu().numpy())
+            preds.append(prediction.argmax(1).detach().cpu().numpy())
             trues.append(y.detach().cpu().numpy())
 
         preds = np.concatenate(preds)
@@ -120,13 +120,17 @@ class Trainer:
             }
 
             history.append(metrics)
+            
 
             print(
                 f"Epoch {epoch+1} | "
                 f"Train Loss: {train_metrics['loss']:.4f} | "
                 f"Train Acc: {train_metrics['accuracy']:.4f} | "
                 f"Val Acc: {val_metrics['accuracy']:.4f} | "
-                f"Val F1: {val_metrics['macro_f1']:.4f}"
+                f"macro F1: {val_metrics['macro_f1']:.4f}"
+                f"weighted F1 {val_metrics['weighted_f1']:.4f} | "
+               
             )
+        (pd.DataFrame(history)).to_csv("results.csv")
 
         return history
