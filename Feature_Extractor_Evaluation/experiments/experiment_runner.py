@@ -16,7 +16,7 @@ class ExperimentRunner(DatasetFactory, ModelFactory, Trainer):
     def __init__(self, data_config, model_config, batch_size=16, epochs=50, lr=1e-3, patience=5, min_delta=1e-3, seed=42, device=None):
 
         self.data_config = data_config
-        self.model_factory = model_config
+        self.model_config = model_config
         self.batch_size = batch_size
         self.epochs = epochs
         self.lr = lr
