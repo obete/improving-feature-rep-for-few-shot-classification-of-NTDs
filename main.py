@@ -33,7 +33,7 @@ def main():
     )
 
     experiment_summary = experiment_runner.ExperimentRunner(data_config, model_config)
-    experiment_summary.head(11)
+    print(experiment_summary)
 
 
 
