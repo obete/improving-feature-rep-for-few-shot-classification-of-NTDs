@@ -13,7 +13,7 @@ sys.path.append(BASE_DIR)
 from omegaconf import OmegaConf
 
 from data.datasets import DatasetFactory
-from Feature_Extractor_Evaluation.experiments import experiment_unner
+from Feature_Extractor_Evaluation.experiments import experiment_runner
 
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -32,7 +32,7 @@ def main():
         os.path.join(BASE_DIR, "Feature_Extractor_Evaluation/configs/fitzpatrick17k.yaml")
     )
 
-    experiment_summary = experiment_runner(data_config, model_config)
+    experiment_summary = experiment_runner.ExperimentRunner(data_config, model_config)
     experiment_summary.head(11)
 
 
