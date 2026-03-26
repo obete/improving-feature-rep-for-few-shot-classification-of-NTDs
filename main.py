@@ -32,8 +32,11 @@ def main():
         os.path.join(BASE_DIR, "Feature_Extractor_Evaluation/configs/fitzpatrick17k.yaml")
     )
 
-    experiment_summary = experiment_runner.ExperimentRunner(data_config, model_config)
-    print(experiment_summary)
+    experiment = experiment_runner.ExperimentRunner(data_config, model_config)
+    summary = experiment.run()
+
+    print(summary)
+    
 
 
 
